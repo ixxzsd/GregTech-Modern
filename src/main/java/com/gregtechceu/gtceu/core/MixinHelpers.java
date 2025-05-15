@@ -248,13 +248,15 @@ public class MixinHelpers {
                     if (dropItem.isEmpty()) dropItem = ChemicalHelper.get(TagPrefix.dust, material);
                     int oreMultiplier = type.isDoubleDrops() ? 2 : 1;
 
-                    LootTable.Builder builder = BlockLootSubProvider.createSilkTouchDispatchTable(block,
-                            BLOCK_LOOT.applyExplosionDecay(block,
-                                    LootItem.lootTableItem(dropItem.getItem())
-                                            .apply(SetItemCountFunction
-                                                    .setCount(ConstantValue.exactly(oreMultiplier)))));
-                    // .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)))); //disable fortune for
-                    // balance reasons. (for now, until we can think of a better solution.)
+LootTable.Builder builder = BlockLootSubProvider.createSilkTouchDispatchTable(
+    block,
+    BLOCK_LOOT.applyExplosionDecay(
+        block,
+        LootItem.lootTableItem(dropItem.getItem())
+            .apply(SetItemCountFunction.setCount(ConstantValue.exactly(oreMultiplier)))
+            .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))
+    )
+);
 
                     Supplier<Material> outputDustMat = type.material();
                     LootPool.Builder pool = LootPool.lootPool();
