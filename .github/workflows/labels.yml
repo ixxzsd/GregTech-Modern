@@ -1,30 +1,35 @@
-name: Ensure “ignore changelog” label
+name: Build and ensure label
 
-# Запускать на пуш в любую ветку, либо вручную
-on:
-  push:
-    branches:
-      - '**'
-  workflow_dispatch:
-
-# Даём токену нужные права
+# 1) Права: чтение содержимого репозитория и запись в issues
 permissions:
   contents: write
   issues: write
 
+# 2) Когда запускать (пример – на каждый PR в main)
+on:
+  pull_request:
+    branches: [ main ]
+
 jobs:
-  create-label:
+  # Ваша уже существующая джоба сборки
+  build:
     runs-on: ubuntu-latest
     steps:
-      # 1) Заберём код (необязательно нужен для лейблов)
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      # … ваши шаги для сборки …
 
-      # 2) Создадим или обновим лейбл
-      - name: Create or update “ignore changelog” label
+  # 3) Новая джоба – проверка/создание лейбла
+  ensure-label:
+    name: Ensure “ignore changelog” label
+    runs-on: ubuntu-latest
+    needs: build                 # будет ждать завершения сборки
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create or update "ignore changelog" label
         uses: peter-evans/create-or-update-label@v3
         with:
           token: ${{ secrets.GH_FULL_TOKEN }}
           name: ignore changelog
-          color: FFFFFF            # hex без “#”
+          color: FFFFFF
           description: Не учитывать этот PR при генерации changelog
