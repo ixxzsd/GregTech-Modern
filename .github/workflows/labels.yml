@@ -1,0 +1,30 @@
+name: Ensure “ignore changelog” label
+
+# Запускать на пуш в любую ветку, либо вручную
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+# Даём токену нужные права
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  create-label:
+    runs-on: ubuntu-latest
+    steps:
+      # 1) Заберём код (необязательно нужен для лейблов)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2) Создадим или обновим лейбл
+      - name: Create or update “ignore changelog” label
+        uses: peter-evans/create-or-update-label@v3
+        with:
+          token: ${{ secrets.GH_FULL_TOKEN }}
+          name: ignore changelog
+          color: FFFFFF            # hex без “#”
+          description: Не учитывать этот PR при генерации changelog
