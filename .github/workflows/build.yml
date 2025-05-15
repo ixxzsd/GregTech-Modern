@@ -12,11 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Клонируем репозиторий
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2) Устанавливаем Java 17
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
@@ -24,15 +22,12 @@ jobs:
           java-version: 17
           cache: gradle
 
-      # 3) Даем права на выполнение скрипта
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      # 4) Собираем проект, пропуская spotless-проверку
       - name: Build with Gradle
         run: ./gradlew clean build -x spotlessCheck -x spotlessKotlinCheck
 
-      # 5) Сохраняем собранный JAR в артефакты Actions
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v3
         with:
